@@ -187,11 +187,11 @@ module ISO8583
       _max = @values.values.max {|a,b|
         a.name.length <=> b.name.length
       }
-      _max_name = _max.name.length
+      _max_name = _max&.name&.length
 
       @values.keys.sort.each{|bmp_num|
         _bmp = @values[bmp_num]
-        str += ("%03d %#{_max_name}s : %s\n" % [bmp_num, _bmp.name, _bmp.value])
+        str += ("%03d %#{-_max_name}s : %s\n" % [bmp_num, _bmp.name, _bmp.value])
       }
       str
     end
