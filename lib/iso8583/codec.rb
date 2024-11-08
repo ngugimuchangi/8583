@@ -96,6 +96,30 @@ module ISO8583
     raw.to_i
   }
 
+  # x+n fields codec
+  ASCII_XN = Codec.new
+  ASCII_XN.encoder = lambda {|val|
+    raise ISO8583Exception.new(
+      "Invalid value: #{val} must start with 'C' or 'D' followed by numeric characters"
+    ) unless val =~ /^[CD]\d+$/
+    val
+  }
+  ASCII_XN.decoder = lambda {|val|
+    val
+  }
+
+  # This codec is used to encode and decode numeric fields that should not be used in
+  # mathematical operations
+  ASCII_NUM_STR = Codec.new
+  ASCII_NUM_STR.encoder = lambda {|num|
+    enc = num.to_s
+    raise ISO8583Exception.new("Invalid value: #{enc} must be numeric!") unless enc =~ /^[0-9]*$/
+    enc
+  }
+  ASCII_NUM_STR.decoder = lambda {|val|
+    val
+  }
+
   PASS_THROUGH_DECODER = lambda{|str|
     str.strip # remove padding
   }

@@ -116,12 +116,46 @@ module ISO8583
   LLLVAR_B.length = LLL
   LLLVAR_B.codec  = Null_Codec
 
+  # Encoded as ASCII_NUM_STR, this field may contain a variable-length (0-99) digits,
+  # but it should be treated as a string and not used for arithmetic operations.
+  LLVAR_N_STR = Field.new
+  LLVAR_N_STR.name = "LLVAR_N_STR"
+  LLVAR_N_STR.length = LL
+  LLVAR_N_STR.codec = ASCII_NUM_STR
+
+  #  Encoded as ASCII_NUM_STR, this field may contain a variable-length (0-999) digits,
+  # but it should be treated as a string and not used for arithmetic operations.
+  LLLVAR_N_STR = Field.new
+  LLLVAR_N_STR.name = "LLLVAR_N_STR"
+  LLLVAR_N_STR.length = LLL
+  LLLVAR_N_STR.codec = ASCII_NUM_STR
+
   # Fixed lengh numerals, repesented in ASCII, padding right justified using zeros
   N = Field.new
   N.name  = "N"
   N.codec = ASCII_Number
   N.padding = lambda {|val, len|
     sprintf("%0#{len}d", val)
+  }
+
+  # Encoded as ASCII_XN, this field should start with letters (C or D) followed by digits.
+  # It represents a specific format that combines both character sets.
+  XN = Field.new
+  XN.name = "XN"
+  XN.codec = ASCII_XN
+  XN.padding = lambda {|val, len|
+    prefix = val[0]
+    num = val[1, len - 1]
+    format("%s%0#{len - 1}d", prefix, num)
+  }
+
+  # Encoded as ASCII_NUM_STR, this field may contain digits,
+  # but it should be treated as a string and not used for arithmetic operations.
+  N_STR = Field.new
+  N_STR.name = "N_STR"
+  N_STR.codec = ASCII_NUM_STR
+  N_STR.padding = lambda {|val, len|
+    sprintf("%0#{len}s", val)
   }
 
   N_BCD = BCDField.new
