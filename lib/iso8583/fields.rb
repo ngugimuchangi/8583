@@ -56,6 +56,15 @@ module ISO8583
     sprintf("%03d", value)
   }
 
+  # Special form to de/encode variable length indicators, six bytes ASCII numerals
+  LLLLLL         = Field.new
+  LLLLLL.name    = "LLLLLL"
+  LLLLLL.length  = 6
+  LLLLLL.codec   = ASCII_Number
+  LLLLLL.padding = lambda {|value|
+    sprintf("%06d", value)
+  }
+
   LL_BCD        = BCDField.new
   LL_BCD.name   = "LL_BCD"
   LL_BCD.length = 2
@@ -102,6 +111,13 @@ module ISO8583
   LLLVAR_ANS.name   = "LLLVAR_ANS"
   LLLVAR_ANS.length = LLL
   LLLVAR_ANS.codec  = ANS_Codec
+
+
+  # Six byte variable length ASCII numeral, payload ASCII+special
+  LLLLLLVAR_ANS        = Field.new
+  LLLLLLVAR_ANS.name   = "LLLLLLVAR_ANS"
+  LLLLLLVAR_ANS.length = LLLLLL
+  LLLLLLVAR_ANS.codec  = ANS_Codec
 
   # Two byte variable length binary payload
   LLVAR_B        = Field.new
