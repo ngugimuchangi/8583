@@ -16,7 +16,7 @@ module ISO8583
     # is passed in, that messages bitmap will be parsed. If
     # not, this initializes and empty bitmap.
     def initialize(message = nil)
-      @bmp = Array.new(128, false)
+      @bmp = Array.new(192, false)
       if message
         initialize_from_message message
       end
@@ -60,7 +60,7 @@ module ISO8583
       # tricky and ugly, setting bit[1] only when generating to_s...
       count = self[1] ? 128 : 64
       # arr.pack("B#{count}").unpack1("H*").upcase
-      arr.pack("B#{count}")
+      arr.pack("b#{count}")
     end
     alias_method :to_b, :to_bytes
 
@@ -87,11 +87,9 @@ module ISO8583
     private
 
     def initialize_from_message(message)
-      # bmp = [message].pack("H16").unpack1("B*")
-      bmp = [message].pack("B64")
+      bmp = [message].pack("H16").unpack1("B*")
       if bmp[0,1] == "1"
-        # bmp = [message].pack("H32").unpack1("B*")
-        bmp = [message].unpack1("B128")
+        bmp = [message].pack("H32").unpack1("B*")
       end
 
       0.upto(bmp.length-1) do |i|
@@ -104,7 +102,7 @@ module ISO8583
       # after the bitmap is taken away.
       def parse(str)
         bmp  = Bitmap.new(str)
-        rest = bmp[1] ? str[16, str.length] : str[8, str.length]
+        rest = bmp[1] ? str[32, str.length] : str[16, str.length]
         [ bmp, rest ]
       end
     end
