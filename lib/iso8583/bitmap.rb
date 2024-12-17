@@ -59,8 +59,7 @@ module ISO8583
       arr = [self.to_s]
       # tricky and ugly, setting bit[1] only when generating to_s...
       count = self[1] ? 128 : 64
-      # arr.pack("B#{count}").unpack1("H*").upcase
-      arr.pack("b#{count}")
+      arr.pack("B#{count}").unpack1("H*").upcase
     end
     alias_method :to_b, :to_bytes
 
